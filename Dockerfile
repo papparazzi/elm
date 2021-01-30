@@ -1,4 +1,5 @@
-FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
+# FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
+FROM icr.io/ibm/liberty:20.0.0.12-wl-kernel-java8-ibmjava
 
 # Add my app and config
 COPY --chown=1001:0  ccm.war.zip /config/apps/
@@ -16,6 +17,6 @@ RUN configure.sh
 #copy / decompress war archives
 
 COPY --chown=1001:0  jts.war.tar.gz /config/apps/jts.war/
-COPY --chown=1001:0  ccm.war.tar.gz /config/apps/ccc.war/
+COPY --chown=1001:0  ccm.war.tar.gz /config/apps/ccm.war/
 COPY --chown=1001:0  rm.war.tar.gz /config/apps/rm.war/
 COPY --chown=1001:0  qm.war.tar.gz /config/apps/qm.war/
