@@ -1,15 +1,11 @@
 FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
 
-ADD --chown=1001:0 jts.war.tar.gz /config/apps/jts.war/
-
-
 # Add my app and config
 COPY --chown=1001:0  ccm.war.zip /config/apps/
 COPY --chown=1001:0  jts.war.zip /config/apps/
 COPY --chown=1001:0  rm.war.zip /config/apps/
 COPY --chown=1001:0  qm.war.zip /config/apps/
 COPY --chown=1001:0  server.xml /config/
-
 
 # Default setting for the verbose option
 ARG VERBOSE=true
