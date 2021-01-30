@@ -6,8 +6,6 @@ COPY --chown=1001:0  jts.war.zip /config/dropins/
 COPY --chown=1001:0  rm.war.zip /config/dropins/
 COPY --chown=1001:0  qm.war.zip /config/dropins/
 COPY --chown=1001:0  server.xml /config/
-COPY --chown=1001:0  conf/basicUserRegistry.xml /config/conf/
-COPY --chown=1001:0  conf/application.xml /config/conf/
 
 # Default setting for the verbose option
 ARG VERBOSE=true
