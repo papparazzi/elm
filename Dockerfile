@@ -1,6 +1,6 @@
 FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
 
-ADD --chown=1001:0 jts.war.tar.gz /config/apps/
+ADD --chown=1001:0 jts.war.tar.gz /config/apps/jts.war/
 
 
 # Add my app and config
