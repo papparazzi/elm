@@ -1,4 +1,5 @@
 FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
+RUN yum install unzip
 
 # Add my app and config
 COPY --chown=1001:0  ccm.war.zip /config/apps/
