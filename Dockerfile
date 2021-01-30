@@ -16,3 +16,8 @@ ARG VERBOSE=true
 
 # This script will add the requested XML snippets, grow image to be fit-for-purpose and apply interim fixes
 RUN configure.sh
+
+#check for access rights if copied after config run
+COPY --chown=1001:0  jts.war.zip /config/apps/
+
+ADD --chown=1001:0 jts.war.tar.gz /config/apps/jts.war/
