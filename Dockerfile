@@ -1,5 +1,5 @@
 # FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
-FROM icr.io/ibm/liberty:20.0.0.12-wl-kernel-java8-ibmjava
+FROM ibmcom/websphere-liberty:kernel-java8-ibmjava-ubi
 
 # Add my app and config
 COPY --chown=1001:0  ccm.war.zip /config/apps/
