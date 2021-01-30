@@ -53,7 +53,7 @@
     </remoteFileAccess>
 
     <!-- do not allow dropped-in applications, and reduce frequency of config file change polling -->
-    <applicationMonitor dropinsEnabled="false" pollingRate="10s" updateTrigger="mbean"/>
+    <applicationMonitor dropinsEnabled="true" pollingRate="10s" updateTrigger="mbean"/>
     <config onError="WARN" monitorInterval="1s" updateTrigger="polled"/>
 
     <!--  suppress messages about references to missing third party jars that are not used -->
