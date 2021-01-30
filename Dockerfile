@@ -1,10 +1,10 @@
 FROM ibmcom/websphere-liberty:kernel-java8-openj9-ubi
 
 # Add my app and config
-COPY --chown=1001:0  apps/ccm.war.zip /config/dropins/
-COPY --chown=1001:0  apps/jts.war.zip /config/dropins/
-COPY --chown=1001:0  apps/rm.war.zip /config/dropins/
-COPY --chown=1001:0  apps/qm.war.zip /config/dropins/
+COPY --chown=1001:0  ccm.war.zip /config/dropins/
+COPY --chown=1001:0  jts.war.zip /config/dropins/
+COPY --chown=1001:0  rm.war.zip /config/dropins/
+COPY --chown=1001:0  qm.war.zip /config/dropins/
 COPY --chown=1001:0  server.xml /config/
 COPY --chown=1001:0  conf/basicUserRegistry.xml /config/conf/
 COPY --chown=1001:0  conf/application.xml /config/conf/
