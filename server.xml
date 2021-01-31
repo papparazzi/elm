@@ -113,6 +113,9 @@
 
     <application type="war" id="rm" name="rm" location="${server.config.dir}/apps/rm.war">
     </application>
+	
+	<application type="war" id="sample" name="sample" location="${server.config.dir}/apps/sample.war">
+    </application>
 
 
     <!-- Edit the following, after setting up the user registry,
