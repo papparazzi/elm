@@ -6,6 +6,7 @@ COPY --chown=1001:0  ccm.war.zip /config/apps/
 COPY --chown=1001:0  jts.war.zip /config/apps/
 COPY --chown=1001:0  rm.war.zip /config/apps/
 COPY --chown=1001:0  qm.war.zip /config/apps/
+COPY --chown=1001:0  sample.war /config/apps/
 COPY --chown=1001:0  server.xml /config/
 
 # Default setting for the verbose option
