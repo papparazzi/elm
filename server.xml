@@ -25,8 +25,8 @@
 
 	<httpEndpoint id="defaultHttpEndpoint"
 			host="*"
-			httpPort="9080"
-			httpsPort="9443" />
+			httpPort="80"
+			httpsPort="443" />
 
     <httpSession invalidateOnUnauthorizedSessionRequestException="true" cookieSecure="true"/>
     <webAppSecurity ssoRequiresSSL="false"/>
