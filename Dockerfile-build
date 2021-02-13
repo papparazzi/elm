@@ -1,0 +1,17 @@
+FROM registry.access.redhat.com/ubi8/ubi-init
+
+# registry.access.redhat.com/ubi8/ubi
+
+RUN yum -y install wget unzip less nano
+
+Workdir /usr/ibm
+RUN wget http://engineering.asuscomm.com:8081/download/ELM-Web.zip
+RUN unzip ELM-Web.zip
+Workdir /usr/ibm/im/repo
+RUN wget http://engineering.asuscomm.com:8081/download/repo-7.0.2.zip
+RUN unzip repo-7.0.2.zip
+Workdir /usr/ibm/im/linux.gtk.x86_64
+# execute silent JAZZ install in standard directories
+RUN ./installc -acceptLicense -showVerboseProgress -input silent-install-server2.xml --launcher.ini silent-install.ini
+EXPOSE 9443
+EXPOSE 9080
