@@ -19,4 +19,4 @@ RUN chown -R 1001:0 /opt/IBM
 EXPOSE 9443
 EXPOSE 9080
 Workdir /opt/IBM/JazzTeamServer/server
-ENTRYPOINT ["server.startup"]
+ENTRYPOINT ["/opt/IBM/JazzTeamServer/server/server.startup"]
