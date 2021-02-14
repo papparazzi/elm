@@ -29,4 +29,5 @@ RUN yum -y install wget unzip \
 EXPOSE 9443
 EXPOSE 9080
 Workdir /opt/IBM/JazzTeamServer/server
-ENTRYPOINT ["/opt/IBM/JazzTeamServer/server/server.startup && tail -f /dev/null"]
+#ENTRYPOINT ["/opt/IBM/JazzTeamServer/server/server.startup && tail -f /dev/null"]
+ENTRYPOINT ["/bin/sh -c"]
