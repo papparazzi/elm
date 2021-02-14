@@ -6,10 +6,10 @@ RUN yum -y install wget unzip
 
 Workdir /usr/ibm
 RUN wget http://engineering.asuscomm.com:8081/download/ELM-Web.zip
-RUN unzip ELM-Web.zip \ && rm -f ELM-Web.zip
+RUN unzip ELM-Web.zip
 Workdir /usr/ibm/im/repo
 RUN wget http://engineering.asuscomm.com:8081/download/repo-7.0.2.zip
-RUN unzip repo-7.0.2.zip && rm -f repo-7.0.2.zip
+RUN unzip repo-7.0.2.zip
 Workdir /usr/ibm/im/linux.gtk.x86_64
 
 # execute silent JAZZ install in standard directories
