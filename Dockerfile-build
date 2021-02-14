@@ -30,4 +30,4 @@ EXPOSE 9443
 EXPOSE 9080
 Workdir /opt/IBM/JazzTeamServer/server
 #ENTRYPOINT ["/opt/IBM/JazzTeamServer/server/server.startup && tail -f /dev/null"]
-ENTRYPOINT ["/bin/sh -c"]
+CMD ["/bin/bash"]
