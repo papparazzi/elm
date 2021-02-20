@@ -28,6 +28,8 @@ RUN yum -y install wget unzip \
 #RUN chown -R 1001:0 /opt/IBM
 EXPOSE 9443
 EXPOSE 9080
+USER 1001
 Workdir /opt/IBM/JazzTeamServer/server
 #ENTRYPOINT ["/opt/IBM/JazzTeamServer/server/server.startup && tail -f /dev/null"]
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
+CMD top
