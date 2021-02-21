@@ -1,8 +1,10 @@
 FROM papparazzi/elm7:v3
+USER root
 RUN mkdir /elm \
- && chown 1001:0 /elm
+ && chown 1001:0 /elm \
+ && chown 1001:0 /opt
 EXPOSE 9443
 EXPOSE 9080
 USER 1001
 Workdir /opt/IBM/JazzTeamServer/server
-CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
+CMD cp -aru /opt /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
