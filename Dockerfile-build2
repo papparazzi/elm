@@ -7,4 +7,4 @@ EXPOSE 9443
 EXPOSE 9080
 USER 1001
 Workdir /opt/IBM/JazzTeamServer/server
-CMD cp -aru /opt /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
+CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
