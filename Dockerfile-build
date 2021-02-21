@@ -1,4 +1,5 @@
 FROM registry.access.redhat.com/ubi8/ubi-init
+VOLUME /elm
 Workdir /usr/ibm
 RUN yum -y install wget unzip \
   && wget http://engineering.asuscomm.com:8081/download/ELM-Web.zip \
@@ -15,4 +16,4 @@ EXPOSE 9443
 EXPOSE 9080
 USER 1001
 Workdir /opt/IBM/JazzTeamServer/server
-CMD /opt/IBM/JazzTeamServer/server/server.startup && top
+CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
