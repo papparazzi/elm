@@ -1,6 +1,6 @@
 FROM papparazzi/elm7:v3
-VOLUME /elm
-run chown 1001:0 /elm
+run mkdir /elm \
+ && chown 1001:0 /elm
 EXPOSE 9443
 EXPOSE 9080
 USER 1001
