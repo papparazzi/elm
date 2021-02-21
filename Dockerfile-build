@@ -8,6 +8,8 @@ Workdir /usr/ibm
 RUN yum -y install wget unzip \
   && wget http://engineering.asuscomm.com:8081/download/ELM-Web.zip \
   && unzip ELM-Web.zip \
+  && ulimit -n 65536 \
+  && ulimit -u 10000 \
   && mkdir /usr/ibm/im/repo \
   && cd /usr/ibm/im/repo \
   && wget http://engineering.asuscomm.com:8081/download/repo-7.0.2.zip \
