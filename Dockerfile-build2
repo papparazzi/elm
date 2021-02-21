@@ -6,6 +6,7 @@ RUN mkdir /elm \
 EXPOSE 9443
 EXPOSE 9080
 USER 1001
+VOLUME /elm
 Workdir /opt/IBM/JazzTeamServer/server
 #CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
 CMD sleep 1000
