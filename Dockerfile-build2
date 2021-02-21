@@ -9,4 +9,4 @@ USER 1001
 VOLUME /elm
 Workdir /opt/IBM/JazzTeamServer/server
 #CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
-CMD sleep 10000
+CMD sleep 100000
