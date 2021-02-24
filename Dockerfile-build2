@@ -8,5 +8,5 @@ EXPOSE 9080
 USER 1001
 VOLUME /elm
 Workdir /opt/IBM/JazzTeamServer/server
-CMD cp -ru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && sleep 100000
-#CMD sleep 100000
+#CMD cp -ru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && sleep 100000
+CMD sleep 100000
