@@ -15,8 +15,8 @@ RUN yum -y install wget unzip \
   && chown -R 1001:0 /opt/IBM
 
 FROM registry.access.redhat.com/ubi8/ubi-init
-WORKDIR /opt/IBM
-COPY --from=builder /opt/IBM .
+WORKDIR /opt/IBM/JazzTeamServer
+COPY --from=builder /opt/IBM/JazzTeamServer .
 EXPOSE 9443
 EXPOSE 9080
 USER 1001
