@@ -1,0 +1,24 @@
+FROM registry.access.redhat.com/ubi8/ubi-init AS builder
+VOLUME /elm
+Workdir /usr/ibm
+RUN yum -y install wget unzip \
+  && wget http://192.168.50.241:8081/download/ELM-Web.zip \
+  && unzip ELM-Web.zip \
+  && mkdir /usr/ibm/im/repo \
+  && cd /usr/ibm/im/repo \
+  && wget http://192.168.50.241:8081/download/repo-7.0.2.zip \
+  && unzip repo-7.0.2.zip \
+  && cd /usr/ibm/im/linux.gtk.x86_64 \
+  && ./installc -acceptLicense -showVerboseProgress -input silent-install-server2.xml --launcher.ini silent-install.ini \
+  && rm -rf /usr/ibm \
+  && chown 1001:0 /elm \
+  && chown -R 1001:0 /opt/IBM
+
+FROM registry.access.redhat.com/ubi8/ubi-init
+WORKDIR /opt/IBM/JazzTeamServer
+COPY --from=builder /opt/IBM/JazzTeamServer .
+EXPOSE 9443
+EXPOSE 9080
+USER 1001
+#CMD cp -aru /opt/IBM /elm && /elm/IBM/JazzTeamServer/server/server.startup && top
+CMD sleep 100000
