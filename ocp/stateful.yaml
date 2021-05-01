@@ -1,102 +1,353 @@
 apiVersion: v1
-data:
-  .dockercfg: ${REGISTRY_SECRET}
-kind: Secret
-metadata:
-  name: docker-secret
-type: kubernetes.io/dockercfg
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mongo-keyfile-secret
-type: Opaque
-data:
-  keyfile: "${KEYFILE_SECRET}"
----
-apiVersion: v1
 kind: Service
 metadata:
-  name: "mongo"
+  name: "elm"
 #  annotations:
 #    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
 spec:
   type: ClusterIP
   ports:
-    - port: 27017
-      targetPort: 27017
+    - port: 9443
+      targetPort: 9443
       protocol: TCP
-      name: "mongo"
+      name: "elm"
   selector:
-    app: "mongo"
+    app: "elm"
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: jts
+spec:
+  to:
+    kind: Service
+    name: elm
+  port:
+    targetPort: elm
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: elm-crt
+spec:
+  secretName: elm-crt-secret
+  dnsNames:
+  - jts-elm.apps.ocp.elm.best
+  issuerRef:
+    name: cloudflare
+    # We can reference ClusterIssuers by changing the kind here.
+    # The default value is Issuer (i.e. a locally namespaced Issuer)
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: response
+  namespace: elm
+data:
+  response.properties: >
+    #
+
+    #Fri Apr 30 09:06:56 UTC 2021
+
+    rm\:configure.database.page\:db.vendor=DERBY
+
+    create.user.page\:password=engineering\!
+
+    register.applications.page\:rm.application.title=/rm
+
+    rm\:data.warehouse.page\:db.jdbc.location=//localhost\:1527/conf/jts/derby/warehouseDB
+
+    create.user.page\:name=ibm
+
+    license.assignment.page\:license.IBMEngineeringSystemsDesignRhapsody-ModelManager=None
+
+    rm\:data.warehouse.page\:db.type=JDBC
+
+    qm\:data.warehouse.page\:db.vendor=derby_net
+
+    register.applications.page\:qm.application.title=/qm
+
+    register.applications.page\:jts.register.gc=false
+
+    qm\:data.warehouse.page\:db.type=JDBC
+
+    qm\:configure.database.page\:db.jdbc.location=conf/qm/derby/repositoryDB
+
+    register.applications.page\:jts.register.lqe=false
+
+    ccm\:configure.database.page\:db.type=JDBC
+
+    data.warehouse.page\:db.net.port=1527
+
+    register.applications.page\:jts.register.ldx=false
+
+    register.applications.page\:ccm.application.title=/ccm
+
+    qm\:data.warehouse.page\:db.jdbc.location=//localhost\:1527/conf/jts/derby/warehouseDB
+
+    rm\:data.warehouse.page\:db.jdbc.password=
+
+    qm\:configure.database.page\:db.vendor=DERBY
+
+    ccm\:data.warehouse.page\:db.jdbc.location=//localhost\:1527/conf/jts/derby/warehouseDB
+
+    license.assignment.page\:license.IBMEngineeringLifecycleManagementBase=com.ibm.team.clm.practitioner
+
+    ccm\:configure.database.page\:db.vendor=DERBY
+
+    license.assignment.page\:com.ibm.team.clm.practitioner.agreement=true
+
+    register.applications.page\:jts.register.rs=false
+
+    configure.public.uri.page\:server.webapp.url.confirm=true
+
+    license.assignment.page\:license.IBMEngineeringRequirementsManagementDOORSNext=None
+
+    data.warehouse.page\:db.jdbc.location=conf/jts/derby/warehouseDB
+
+    configure.database.page\:db.vendor=DERBY
+
+    admin.access\:ws.allow.admin.access=false
+
+    register.applications.page\:jts.register.rm=true
+
+    qm\:configure.database.page\:db.type=JDBC
+
+    qm\:data.warehouse.page\:db.jdbc.password=
+
+    create.user.page\:emailAddress=ibm@ibm.de
+
+    license.assignment.page\:license.IBMEngineeringLifecycleOptimization-EngineeringInsights=None
+
+    ccm\:data.warehouse.page\:db.jdbc.password=
+
+    configure.email.page\:notification.mail.enabled=false
+
+    data.warehouse.page\:db.vendor=DERBY
+
+    register.applications.page\:rm.discovery.url=https\://jts-elm.apps.ocp.elm.best/rm/scr
+
+    register.applications.page\:jts.register.relm=false
+
+    register.applications.page\:qm.discovery.url=https\://jts-elm.apps.ocp.elm.best/qm/scr
+
+    register.applications.page\:ccm.discovery.url=https\://jts-elm.apps.ocp.elm.best/ccm/scr
+
+    rm\:configure.database.page\:db.jdbc.location=conf/rm/derby/repositoryDB
+
+    register.applications.page\:jts.register.dcc=false
+
+    register.applications.page\:jts.register.ccm=true
+
+    license.assignment.page\:license.IBMEngineeringTestManagement=None
+
+    license.assignment.page\:license.IBMEngineeringWorkflowManagement=None
+
+    create.user.page\:userId=ibm
+
+    ccm\:configure.database.page\:db.jdbc.location=conf/ccm/derby/repositoryDB
+
+    register.applications.page\:jts.register.qm=true
+
+    ccm\:data.warehouse.page\:db.type=JDBC
+
+    ccm\:data.warehouse.page\:db.vendor=derby_net
+
+    configure.public.uri.page\:server.webapp.url=https\://jts-elm.apps.ocp.elm.best/jts
+
+    license.assignment.page\:com.ibm.team.clm.practitioner.activate.trial=true
+
+    user.registry.page\:user.registry.type=DETECT
+
+    rm\:configure.database.page\:db.type=JDBC
+
+    register.applications.page\:jts.nonlocal.application.number=0
+
+    rm\:data.warehouse.page\:db.vendor=derby_net
+
+    configure.database.page\:db.type=JDBC
+
+    data.warehouse.page\:db.type=JDBC
+
+    configure.database.page\:db.jdbc.location=conf/jts/derby/repositoryDB
+---
+# only deploy JTS application 
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: jts
+  namespace: elm
+data:
+  application.xml: >
+    <server>
+
+    <application type="war" id="jts" name="jts" location="${server.config.dir}/apps/jts.war">
+        <application-bnd>
+            <security-role name="JazzAdmins">
+                <group name="JazzAdmins" />
+            </security-role>
+            <security-role name="JazzProjectAdmins">
+                <group name="JazzProjectAdmins" />
+            </security-role>
+            <security-role name="JazzUsers">
+                <group name="JazzUsers" />
+            </security-role>
+            <security-role name="JazzGuests">
+                <group name="JazzGuests" />
+            </security-role>
+        </application-bnd>
+    </application>
+    </server>
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongo
+  name: elm
 spec:
   selector:
     matchLabels:
-      app: mongo
-  serviceName: "mongo"
+      app: elm
+  serviceName: "elm"
   replicas: 1
   template:
     metadata:
       labels:
-        app: mongo
+        app: elm
     spec:
-      imagePullSecrets:
-      - name: docker-secret
       terminationGracePeriodSeconds: 10
       volumes:
-      - name: mongo-ca
-        secret:
-          secretName: mongo-ca
-      - name: mongo-keyfile-secret
-        secret:
-          secretName: mongo-keyfile-secret
+       - name: secret-volume
+         secret:
+           secretName: elm-crt-secret
+       - name: response
+         configMap:
+           name: response
+       - name: jts
+         configMap:
+           name: jts
       containers:
-      - name: mongo
-        image: ${DOCKER_IMAGE}
+      - name: elm
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
+        terminationGracePeriodSeconds: 120
+        lifecycle:
+          preStop:
+            exec:
+              # SIGTERM triggers a quick exit; gracefully terminate instead
+              command: ['sh', '-c', "/opt/IBM/JazzTeamServer/server/server.shutdown"]
+          postStart:
+            exec:
+              # start command after container init
+              command: ['sh', '-c', "/opt/IBM/JazzTeamServer/server/server.startup"]
         ports:
-        - containerPort: 27017
+        - containerPort: 9443
         volumeMounts:
-        - name: mongo-persistent-storage
-          mountPath: /var/lib/mongodb/data
-        - name: mongo-ca
-          mountPath: "/stuff/"
-          readOnly: true
-        - name: mongo-keyfile-secret
-          mountPath: "/stuff/keyfile"
-          readOnly: true
+        - name: storage
+          mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
+        - name: conf
+          mountPath: "/opt/IBM/JazzTeamServer/server/conf"
+        - name: response
+          mountPath: "/opt/IBM/JazzTeamServer/setup"
+        - name: repotools
+          mountPath: "/opt/IBM/JazzTeamServer/repotools"
+        - name: logs
+          mountPath: "/opt/IBM/JazzTeamServer/server/logs"
+        - name: jts
+          mountPath: "/opt/IBM/JazzTeamServer/server/liberty/servers/clm/conf/application.xml"
+          subPath: "application.xml"
+      initContainers:
+      - name: init-conf
+        volumeMounts:
+        - name: conf
+          mountPath: "/tmp/conf"
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
+        command: ['sh', '-c', "cp -Ruv /opt/IBM/JazzTeamServer/server/conf /tmp/"]
+      - name: init-repotools
+        volumeMounts:
+        - name: repotools
+          mountPath: "/tmp/repotools"
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
+        command: ['sh', '-c', "cp -Ruv /opt/IBM/JazzTeamServer/repotools /tmp/"]
+      - name: init-jazz
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
+        volumeMounts:
+        - name: storage
+          mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
+        - name: conf
+          mountPath: "/opt/IBM/JazzTeamServer/server/conf"
+        - name: response
+          mountPath: "/opt/IBM/JazzTeamServer/server"
+        - name: repotools
+          mountPath: "/opt/IBM/JazzTeamServer/repotools"
+        - name: logs
+          mountPath: "/opt/IBM/JazzTeamServer/server/logs"
+        command: ['sh', '-c', "/opt/IBM/JazzTeamServer/server/server.startup"]
+      - name: init-ssl-cert
+        image: registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1-16
+        command: ['/bin/bash']
+        args: ['-c', "openssl pkcs12 -export -inkey $keyfile -in $crtfile -out $keystore_pkcs12 -password pass:$password && keytool -importkeystore -noprompt -srckeystore $keystore_pkcs12 -srcstoretype pkcs12 -destkeystore $keystore_jks -storepass $password -srcstorepass $password"]
         env:
-          - name: MONGODB_REPLICA_NAME
-            value: "rs0"
-          - name: SSL_PEM_FILE
-            value: "/secret/mongodb.pem"
-          - name: SSL_CA_FILE
-            value: "/secret/ca.pem"
-          - name: MONGODB_KEYFILE
-            value: "/secret/keyfile"
-          - name: MONGODB_SERVICE_NAME
-            value: "mongo"
-          - name: MONGODB_ADMIN_PASSWORD
-            value: "${ADMIN_PASSWORD}"
-        readinessProbe:
-          exec:
-            command:
-              - stat
-              - /tmp/initialized
-          initialDelaySeconds: 60
-          periodSeconds: 30
+         - name: keyfile
+           value: /var/run/secrets/openshift.io/services_serving_certs/tls.key
+         - name: crtfile
+           value: /var/run/secrets/openshift.io/services_serving_certs/tls.crt
+         - name: keystore_pkcs12
+           value: /opt/IBM/JazzTeamServer/server/liberty/servers/clm/resources/security/ibm-team-ssl.p12
+         - name: keystore_jks
+           value: /opt/IBM/JazzTeamServer/server/liberty/servers/clm/resources/security/ibm-team-ssl.jks
+         - name: password
+           value: ibm-team 
+        volumeMounts:
+        - name: storage
+          mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
+        - name: secret-volume
+          mountPath: /var/run/secrets/openshift.io/services_serving_certs
   volumeClaimTemplates:
   - metadata:
-      name: elm-storage
+      name: storage
     annotations:
       volume.beta.kubernetes.io/storage-class: "mongodbsc"
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 15Gi
+  - metadata:
+      name: conf
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
       storageClassName: "mongodbsc"
       resources:
         requests:
           storage: 10Gi
+  - metadata:
+      name: repotools
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 1Gi
+  - metadata:
+      name: logs
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 1Gi

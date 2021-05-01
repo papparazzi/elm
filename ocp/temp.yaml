@@ -1,0 +1,15 @@
+- name: init-post-install
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
+        volumeMounts:
+        - name: response
+          mountPath: "/opt/IBM/JazzTeamServer/setup"
+        - name: storage
+          mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
+        - name: conf
+          mountPath: "/opt/IBM/JazzTeamServer/server/conf"
+        - name: repotools
+          mountPath: "/opt/IBM/JazzTeamServer/repotools"
+        - name: logs
+          mountPath: "/opt/IBM/JazzTeamServer/server/logs"
+        command: ['sh', '-c', "/opt/IBM/JazzTeamServer/server/server.startup && sleep 120 && /opt/IBM/JazzTeamServer/server/repotools-jts.sh -setup parametersFile=/opt/IBM/JazzTeamServer/setup/response.properties logFile=/opt/IBM/JazzTeamServer/server/logs/post-install-jts.log"]
