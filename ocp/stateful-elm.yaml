@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "elm"
+  name: "ccm"
 #  annotations:
 #    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
 spec:
@@ -10,38 +10,23 @@ spec:
     - port: 9443
       targetPort: 9443
       protocol: TCP
-      name: "elm"
+      name: "ccm"
   selector:
-    app: "elm"
+    app: "ccm"
 ---
 apiVersion: v1
 kind: Route
 metadata:
-  name: jts
+  name: ccm
 spec:
   to:
     kind: Service
-    name: elm
+    name: ccm
   port:
-    targetPort: elm
+    targetPort: ccm
   tls:
     termination: passthrough
     insecureEdgeTerminationPolicy: Redirect
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: elm-crt
-spec:
-  secretName: elm-crt-secret
-  dnsNames:
-  - jts-alm.apps.ocp.elm.best
-  issuerRef:
-    name: cloudflare
-    # We can reference ClusterIssuers by changing the kind here.
-    # The default value is Issuer (i.e. a locally namespaced Issuer)
-    kind: ClusterIssuer
-    group: cert-manager.io
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -180,13 +165,13 @@ data:
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: jts
+  name: ccm
   namespace: alm
 data:
   application.xml: >
     <server>
 
-    <application type="war" id="jts" name="jts" location="${server.config.dir}/apps/jts.war">
+    <application type="war" id="ccm" name="ccm" location="${server.config.dir}/apps/ccm.war">
         <application-bnd>
             <security-role name="JazzAdmins">
                 <group name="JazzAdmins" />
@@ -207,17 +192,17 @@ data:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: elm
+  name: ccm
 spec:
   selector:
     matchLabels:
-      app: elm
-  serviceName: "elm"
+      app: ccm
+  serviceName: "ccm"
   replicas: 1
   template:
     metadata:
       labels:
-        app: elm
+        app: ccm
     spec:
       terminationGracePeriodSeconds: 10
       volumes:
@@ -227,11 +212,11 @@ spec:
        - name: response
          configMap:
            name: response
-       - name: jts
+       - name: ccm
          configMap:
-           name: jts
+           name: ccm
       containers:
-      - name: elm
+      - name: ccm
         image:  >-
             image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
         terminationGracePeriodSeconds: 120
@@ -247,30 +232,30 @@ spec:
         ports:
         - containerPort: 9443
         volumeMounts:
-        - name: storage
+        - name: storage-ccm
           mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
-        - name: conf
+        - name: conf-ccm
           mountPath: "/opt/IBM/JazzTeamServer/server/conf"
         - name: response
           mountPath: "/opt/IBM/JazzTeamServer/setup"
-        - name: repotools
+        - name: repotools-ccm
           mountPath: "/opt/IBM/JazzTeamServer/repotools"
-        - name: logs
+        - name: logs-ccm
           mountPath: "/opt/IBM/JazzTeamServer/server/logs"
-        - name: jts
+        - name: ccm
           mountPath: "/opt/IBM/JazzTeamServer/server/liberty/servers/clm/conf/application.xml"
           subPath: "application.xml"
       initContainers:
       - name: init-conf
         volumeMounts:
-        - name: conf
+        - name: conf-ccm
           mountPath: "/tmp/conf"
         image:  >-
             image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
         command: ['sh', '-c', "cp -Ruv /opt/IBM/JazzTeamServer/server/conf /tmp/"]
       - name: init-repotools
         volumeMounts:
-        - name: repotools
+        - name: repotools-ccm
           mountPath: "/tmp/repotools"
         image:  >-
             image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
@@ -279,15 +264,15 @@ spec:
         image:  >-
             image-registry.openshift-image-registry.svc:5000/elm/elm@sha256:5c858503391017063389cec4ad9415a976f6dc5c8bd7daeeba4419191f7b807a
         volumeMounts:
-        - name: storage
+        - name: storage-ccm
           mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
-        - name: conf
+        - name: conf-ccm
           mountPath: "/opt/IBM/JazzTeamServer/server/conf"
         - name: response
           mountPath: "/opt/IBM/JazzTeamServer/setup"
-        - name: repotools
+        - name: repotools-ccm
           mountPath: "/opt/IBM/JazzTeamServer/repotools"
-        - name: logs
+        - name: logs-ccm
           mountPath: "/opt/IBM/JazzTeamServer/server/logs"
         command: ['sh', '-c', "/opt/IBM/JazzTeamServer/server/server.startup"]
       - name: init-ssl-cert
@@ -306,13 +291,13 @@ spec:
          - name: password
            value: ibm-team 
         volumeMounts:
-        - name: storage
+        - name: storage-ccm
           mountPath: /opt/IBM/JazzTeamServer/server/liberty/servers/
         - name: secret-volume
           mountPath: /var/run/secrets/openshift.io/services_serving_certs
   volumeClaimTemplates:
   - metadata:
-      name: storage
+      name: storage-ccm
     annotations:
       volume.beta.kubernetes.io/storage-class: "mongodbsc"
     spec:
@@ -322,7 +307,7 @@ spec:
         requests:
           storage: 15Gi
   - metadata:
-      name: conf
+      name: conf-ccm
     annotations:
       volume.beta.kubernetes.io/storage-class: "mongodbsc"
     spec:
@@ -332,7 +317,7 @@ spec:
         requests:
           storage: 10Gi
   - metadata:
-      name: repotools
+      name: repotools-ccm
     annotations:
       volume.beta.kubernetes.io/storage-class: "mongodbsc"
     spec:
@@ -342,7 +327,7 @@ spec:
         requests:
           storage: 1Gi
   - metadata:
-      name: logs
+      name: logs-ccm
     annotations:
       volume.beta.kubernetes.io/storage-class: "mongodbsc"
     spec:
