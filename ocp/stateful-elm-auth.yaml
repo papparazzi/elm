@@ -1,0 +1,175 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "auth"
+#  annotations:
+#    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9643
+      targetPort: 9643
+      protocol: TCP
+      name: "auth"
+  selector:
+    app: "auth"
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: auth
+spec:
+  to:
+    kind: Service
+    name: auth
+  port:
+    targetPort: auth
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+---
+# only deploy JTS application 
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: auth-user
+  namespace: alm
+data:
+  localUserRegistry.xml: >
+    <server>
+
+     <basicRegistry>
+      <user name="ADMIN" password="{xor}HhsSFhE="/>
+      <user name="clmadmin" password="{xor}PDMyPjsyNjE="/>
+
+      <group id="JazzAdmins" name="JazzAdmins">
+        <member name="ADMIN"/>
+        <member name="clmadmin"/>
+      </group>
+      <group id="JazzUsers" name="JazzUsers">
+      </group>
+      <group id="JazzGuests" name="JazzGuests">
+      </group>
+      <group id="JazzProjectAdmins" name="JazzProjectAdmins">
+      </group>
+    </basicRegistry>
+
+        <!--administrator-role>
+      <user>ADMIN</user>
+    </administrator-role-->
+
+    </server>
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: log4j
+  namespace: alm
+data:
+  log4j.properties: >
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auth
+spec:
+  selector:
+    matchLabels:
+      app: auth
+  serviceName: "auth"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      terminationGracePeriodSeconds: 10
+      volumes:
+       - name: secret-volume
+         secret:
+           secretName: elm-auth-secret
+       - name: auth-user
+         configMap:
+           name: auth-user
+       - name: log4j
+         configMap:
+           name: log4j
+      containers:
+      - name: auth
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/alm/elm-auth@sha256:ab3b33be971ea7f88fe6496ffaa3135ae693bcb5033b2c99e08df47e0e3066b1
+        terminationGracePeriodSeconds: 120
+        lifecycle:
+          preStop:
+            exec:
+              # SIGTERM triggers a quick exit; gracefully terminate instead
+              command: ['sh', '-c', "/opt/IBM/JazzAuthServer/stop-jazz"]
+   #       postStart:
+   #         exec:
+              # start command after container init
+   #           command: ['sh', '-c', "/opt/IBM/JazzAuthServer/start-jazz"]
+        ports:
+        - containerPort: 9643
+        volumeMounts:
+        - name: storage-auth
+          mountPath: /opt/IBM/JazzAuthServer/wlp/usr/servers
+          subPath: "servers"
+        - name: conf-auth
+          mountPath: "/opt/IBM/JazzAuthServer/derby"
+          subPath: "derby"
+        - name: auth-user
+          mountPath: "/opt/IBM/JazzAuthServer/wlp/usr/servers/jazzop/localUserRegistry.xml"
+          subPath: "localUserRegistry.xml"
+        - name: logs-auth
+          mountPath: /opt/IBM/JazzAuthServer/wlp/usr/servers/jazzop/logs
+          subPath: "logs"
+        - name: log4j
+          mountPath: /opt/IBM/JazzAuthServer/log4j.properties
+          subPath: "log4j.properties"
+      initContainers:
+      - name: init-db
+        volumeMounts:
+        - name: conf-auth
+          mountPath: "/tmp"
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/alm/elm-auth@sha256:ab3b33be971ea7f88fe6496ffaa3135ae693bcb5033b2c99e08df47e0e3066b1
+        command: ['sh', '-c', "cp -Ruv /opt/IBM/JazzAuthServer/derby /tmp"]
+      - name: init-server
+        volumeMounts:
+        - name: storage-auth
+          mountPath: "/tmp"
+        image:  >-
+            image-registry.openshift-image-registry.svc:5000/alm/elm-auth@sha256:ab3b33be971ea7f88fe6496ffaa3135ae693bcb5033b2c99e08df47e0e3066b1
+        command: ['sh', '-c', "cp -Ruv /opt/IBM/JazzAuthServer/wlp/usr/servers /tmp"]
+  volumeClaimTemplates:
+  - metadata:
+      name: storage-auth
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 15Gi
+  - metadata:
+      name: conf-auth
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 10Gi
+  - metadata:
+      name: logs-auth
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "mongodbsc"
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "mongodbsc"
+      resources:
+        requests:
+          storage: 10Gi
+  
