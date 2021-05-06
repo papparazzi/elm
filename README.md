@@ -6,3 +6,5 @@ Test code only utilzing propriatary software with licence rights attached. pleas
 
 authenthication server yaml running
 
+statefulset only supports single server
+
